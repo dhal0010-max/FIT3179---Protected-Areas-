@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Safeguarding Australia's Natural Heritage | FIT3179 DV2</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.22.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.21.0"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #f4f7f6;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      background: #1b4332;
+      color: #ffffff;
+      padding: 40px 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h1 { margin: 0 0 10px 0; font-size: 2.3rem; }
+    p.subtitle { margin: 0; color: #b7e4c7; font-size: 1.15rem; }
+    .card {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    h2 { color: #1b4332; margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; font-size: 1.35rem; }
+    .chart-box { text-align: center; margin: 20px 0; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .annotation {
+      background: #eefcce;
+      border-left: 4px solid #52b788;
+      padding: 12px 18px;
+      margin: 15px 0;
+      font-size: 0.95rem;
+      border-radius: 0 6px 6px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Safeguarding Australia's Natural Heritage</h1>
+    <p class="subtitle">Multi-Source Analysis of Conservation Targets (CAPAD 2024, IBRA 7.0, & ABS)</p>
+  </header>
+
+  <!-- CHART 1: Map Idiom 1 -->
+  <div class="card">
+    <h2>1. Terrestrial Protected Area Choropleth Map by State/Territory (Map Idiom 1)</h2>
+    <p>Choropleth map utilizing ABS land area metrics and CAPAD reserves to illustrate state/territory protection proportions.</p>
+    <div class="chart-box" id="vis-map1"></div>
+    <div class="annotation"><strong>Key Insight:</strong> The ACT leads nationally with over 55% protection coverage.</div>
+  </div>
+
+  <!-- CHART 2: Map Idiom 2 -->
+  <div class="card">
+    <h2>2. Proportional Symbol Map of IBRA 7.0 Ecological Bioregions (Map Idiom 2)</h2>
+    <p>Proportional symbol map displaying conservation reserve distribution across IBRA 7.0 ecological bioregions.</p>
+    <div class="chart-box" id="vis-map2"></div>
+  </div>
+
+  <!-- CHART 3: Map Idiom 3 -->
+  <div class="card">
+    <h2>3. Marine Protected Area Bubble Map across Commonwealth & State Waters (Map Idiom 3)</h2>
+    <p>Geospatial bubble map depicting the scale of state and commonwealth marine protected areas.</p>
+    <div class="chart-box" id="vis-map3"></div>
+  </div>
+
+  <!-- CHARTS 4 & 5 (Advanced Idioms 4 & 5) -->
+  <div class="card grid-2">
+    <div>
+      <h2>4. Governance Share (Advanced Idiom 4)</h2>
+      <p>Horizontal bar chart comparing Indigenous Community IPAs versus government management.</p>
+      <div class="chart-box" id="vis-chart4"></div>
+    </div>
+    <div>
+      <h2>5. Terrestrial vs Marine Protection (Advanced Idiom 5)</h2>
+      <p>Donut/Ring chart highlighting proportion shares under CAPAD 2024.</p>
+      <div class="chart-box" id="vis-chart5"></div>
+    </div>
+  </div>
+
+  <!-- CHARTS 6 & 7 (Advanced Idioms 6 & 7) -->
+  <div class="card grid-2">
+    <div>
+      <h2>6. Terrestrial IUCN Category (Advanced Idiom 6)</h2>
+      <p>Column chart of terrestrial reserve hectares by IUCN category (Ia to VI).</p>
+      <div class="chart-box" id="vis-chart6"></div>
+    </div>
+    <div>
+      <h2>7. Marine Reserves IUCN Category (Advanced Idiom 7)</h2>
+      <p>Grouped column chart showcasing marine reserve breakdowns by management type.</p>
+      <div class="chart-box" id="vis-chart7"></div>
+    </div>
+  </div>
+
+  <!-- CHARTS 8, 9 & 10 (Advanced Idioms 8, 9 & 10) -->
+  <div class="card">
+    <h2>8, 9 & 10. Area Metrics, Contributions & Bioregional Scatter (Advanced Idioms 8, 9 & 10)</h2>
+    <p>Comprehensive cross-examination of ABS land areas against reserve contributions and total bioregion sizes.</p>
+    <div class="grid-2">
+      <div>
+        <div class="chart-box" id="vis-chart8"></div>
+      </div>
+      <div>
+        <div class="chart-box" id="vis-chart9"></div>
+      </div>
+    </div>
+    <div class="chart-box" id="vis-chart10"></div>
+  </div>
+
+  <script>
+    // Chart 1: Map Idiom 1 (Choropleth)
+    const map1Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 650,
+      "height": 380,
+      "title": {"text": "Australian Terrestrial Protected Area Coverage by State (%)", "fontSize": 15},
+      "data": {"url": "australia-states.geojson", "format": {"type": "json", "property": "features"}},
+      "transform": [{
+        "lookup": "properties.STATE_NAME",
+        "from": {"data": {"url": "state_protection.csv"}, "key": "state", "fields": ["pct", "area_ha", "code"]}
+      }],
+      "projection": {"type": "mercator", "center": [133, -27], "scale": 600},
+      "mark": {"type": "geoshape", "stroke": "#ffffff", "strokeWidth": 1.2},
+      "encoding": {
+        "color": {"field": "pct", "type": "quantitative", "title": "Protected (%)", "scale": {"scheme": "greens"}},
+        "tooltip": [
+          {"field": "properties.STATE_NAME", "type": "nominal", "title": "Jurisdiction"},
+          {"field": "pct", "type": "quantitative", "title": "Protected Area (%)", "format": ".1f"},
+          {"field": "area_ha", "type": "quantitative", "title": "Area (ha)", "format": ","}
+        ]
+      }
+    };
+
+    // Chart 2: Map Idiom 2 (Proportional Symbol Map)
+    const map2Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 650,
+      "height": 380,
+      "title": {"text": "Protected Area by IBRA 7.0 Bioregion (Hectares)", "fontSize": 15},
+      "projection": {"type": "mercator", "center": [133, -27], "scale": 600},
+      "layer": [
+        {
+          "data": {"url": "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/AUS.geo.json", "format": {"type": "json", "property": "features"}},
+          "mark": {"type": "geoshape", "fill": "#edf2f7", "stroke": "#cbd5e0"}
+        },
+        {
+          "data": {"values": [
+            {"region": "Arnhem Coast", "lat": -12.5, "lon": 135.5, "area": 1809069},
+            {"region": "Arnhem Plateau", "lat": -13.0, "lon": 133.0, "area": 1728646},
+            {"region": "Great Victoria Desert", "lat": -28.5, "lon": 125.0, "area": 7500000},
+            {"region": "Kimberley", "lat": -16.5, "lon": 126.0, "area": 4200000},
+            {"region": "Cape York Peninsula", "lat": -14.0, "lon": 143.0, "area": 3100000}
+          ]},
+          "mark": {"type": "circle", "opacity": 0.8, "color": "#2a9d8f"},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"},
+            "size": {"field": "area", "type": "quantitative", "title": "Protected Area (ha)", "scale": {"range": [100, 900]}},
+            "tooltip": [{"field": "region", "type": "nominal", "title": "Bioregion"}, {"field": "area", "type": "quantitative", "title": "Area (ha)", "format": ","}]
+          }
+        }
+      ]
+    };
+
+    // Chart 3: Map Idiom 3 (Marine Protected Area Bubble Map)
+    const map3Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 650,
+      "height": 380,
+      "title": {"text": "Marine Protected Areas by Jurisdiction (CAPAD)", "fontSize": 15},
+      "projection": {"type": "mercator", "center": [133, -27], "scale": 600},
+      "layer": [
+        {
+          "data": {"url": "https://raw.githubusercontent.com/johan/world.geo.json/master/countries/AUS.geo.json", "format": {"type": "json", "property": "features"}},
+          "mark": {"type": "geoshape", "fill": "#edf2f7", "stroke": "#cbd5e0"}
+        },
+        {
+          "data": {"values": [
+            {"jurisdiction": "Commonwealth Waters", "lat": -24.0, "lon": 112.0, "area": 330000000},
+            {"jurisdiction": "Queensland Marine", "lat": -19.0, "lon": 149.0, "area": 42000000},
+            {"jurisdiction": "Western Australia Marine", "lat": -28.0, "lon": 113.0, "area": 25000000},
+            {"jurisdiction": "NSW Marine", "lat": -34.0, "lon": 152.0, "area": 336371}
+          ]},
+          "mark": {"type": "circle", "opacity": 0.75, "color": "#0077b6"},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"},
+            "size": {"field": "area", "type": "quantitative", "title": "Marine Area (ha)", "scale": {"range": [150, 1200]}},
+            "tooltip": [{"field": "jurisdiction", "type": "nominal", "title": "Jurisdiction"}, {"field": "area", "type": "quantitative", "title": "Area (ha)", "format": ","}]
+          }
+        }
+      ]
+    };
+
+    // Chart 4: Advanced Idiom 4 (Horizontal Bar Chart of Governance Share)
+    const chart4Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 420,
+      "height": 220,
+      "title": {"text": "Governance Share (%)", "fontSize": 13},
+      "data": {"values": [
+        {"governance": "Community (IPAs)", "share": 49.48},
+        {"governance": "Government", "share": 38.35},
+        {"governance": "Joint Management", "share": 6.92},
+        {"governance": "Private Conservation", "share": 5.25}
+      ]},
+      "mark": {"type": "bar", "cornerRadiusEnd": 4},
+      "encoding": {
+        "x": {"field": "share", "type": "quantitative", "title": "Contribution (%)"},
+        "y": {"field": "governance", "type": "nominal", "title": null, "sort": "-x"},
+        "color": {"field": "governance", "type": "nominal", "scale": {"range": ["#2d6a4f", "#52b788", "#74c69d", "#b7e4c7"]}, "legend": null},
+        "tooltip": [{"field": "governance"}, {"field": "share"}]
+      }
+    };
+
+    // Chart 5: Advanced Idiom 5 (Donut/Ring Chart)
+    const chart5Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 420,
+      "height": 220,
+      "title": {"text": "Terrestrial vs Marine Protection", "fontSize": 13},
+      "data": {"values": [
+        {"category": "Terrestrial", "proportion": 22.5},
+        {"category": "Marine", "proportion": 48.2}
+      ]},
+      "mark": {"type": "arc", "innerRadius": 50, "outerRadius": 80},
+      "encoding": {
+        "theta": {"field": "proportion", "type": "quantitative"},
+        "color": {"field": "category", "type": "nominal", "scale": {"range": ["#1b4332", "#0077b6"]}},
+        "tooltip": [{"field": "category"}, {"field": "proportion"}]
+      }
+    };
+
+    // Chart 6: Advanced Idiom 6 (Column Chart of Terrestrial Reserves by IUCN Category)
+    const chart6Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 420,
+      "height": 230,
+      "title": {"text": "Terrestrial Reserves by IUCN Category", "fontSize": 13},
+      "data": {"values": [
+        {"iucn": "Ia", "area_mha": 16.01},
+        {"iucn": "Ib", "area_mha": 3.86},
+        {"iucn": "II", "area_mha": 38.40},
+        {"iucn": "III", "area_mha": 1.20},
+        {"iucn": "IV", "area_mha": 4.50},
+        {"iucn": "VI", "area_mha": 98.20}
+      ]},
+      "mark": {"type": "bar", "color": "#1b4332", "cornerRadiusEnd": 4},
+      "encoding": {
+        "x": {"field": "iucn", "type": "nominal", "title": "IUCN Category"},
+        "y": {"field": "area_mha", "type": "quantitative", "title": "Area (Mha)"},
+        "tooltip": [{"field": "iucn"}, {"field": "area_mha"}]
+      }
+    };
+
+    // Chart 7: Advanced Idiom 7 (Grouped Column Chart of Marine Reserves by IUCN Category)
+    const chart7Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 420,
+      "height": 230,
+      "title": {"text": "Marine Reserves Grouped by IUCN & Zone", "fontSize": 13},
+      "data": {"values": [
+        {"iucn": "Ia", "zone": "Commonwealth", "area_mha": 45.2},
+        {"iucn": "Ia", "zone": "State", "area_mha": 2.1},
+        {"iucn": "II", "zone": "Commonwealth", "area_mha": 120.4},
+        {"iucn": "II", "zone": "State", "area_mha": 14.3},
+        {"iucn": "VI", "zone": "Commonwealth", "area_mha": 160.0},
+        {"iucn": "VI", "zone": "State", "area_mha": 8.5}
+      ]},
+      "mark": "bar",
+      "encoding": {
+        "x": {"field": "iucn", "type": "nominal", "title": "IUCN Category"},
+        "y": {"field": "area_mha", "type": "quantitative", "title": "Area (Mha)"},
+        "xOffset": {"field": "zone"},
+        "color": {"field": "zone", "type": "nominal", "scale": {"range": ["#0077b6", "#90e0ef"]}},
+        "tooltip": [{"field": "iucn"}, {"field": "zone"}, {"field": "area_mha"}]
+      }
+    };
+
+    // Chart 8: Advanced Idiom 8 (Dot Plot comparing ABS Land Area vs Total Protected Area)
+    const chart8Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 420,
+      "height": 200,
+      "title": {"text": "State Land Area vs Protected Area", "fontSize": 13},
+      "data": {"values": [
+        {"state": "NSW", "protected": 8.3, "total": 80.1},
+        {"state": "VIC", "protected": 4.0, "total": 22.7},
+        {"state": "QLD", "protected": 16.1, "total": 172.7},
+        {"state": "SA", "protected": 29.9, "total": 98.3},
+        {"state": "WA", "protected": 28.4, "total": 252.9}
+      ]},
+      "mark": {"type": "point", "filled": true, "size": 120, "color": "#2d6a4f"},
+      "encoding": {
+        "x": {"field": "total", "type": "quantitative", "title": "Total State Area (Mha)"},
+        "y": {"field": "protected", "type": "quantitative", "title": "Protected Area (Mha)"},
+        "tooltip": [{"field": "state"}, {"field": "total"}, {"field": "protected"}]
+      }
+    };
+
+    // Chart 9: Advanced Idiom 9 (Diverging/Ranked Bar Chart of Contribution)
+    const chart9Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 420,
+      "height": 200,
+      "title": {"text": "Contribution to National Reserve System (%)", "fontSize": 13},
+      "data": {"values": [
+        {"state": "WA", "contrib": 18.5},
+        {"state": "NT", "contrib": 21.6},
+        {"state": "SA", "contrib": 19.5},
+        {"state": "QLD", "contrib": 10.5},
+        {"state": "NSW", "contrib": 5.4},
+        {"state": "VIC", "contrib": 2.6}
+      ]},
+      "mark": {"type": "bar", "cornerRadiusEnd": 3},
+      "encoding": {
+        "x": {"field": "contrib", "type": "quantitative", "title": "Contribution (%)"},
+        "y": {"field": "state", "type": "nominal", "title": null, "sort": "-x"},
+        "color": {"field": "contrib", "type": "quantitative", "scale": {"scheme": "greens"}, "legend": null},
+        "tooltip": [{"field": "state"}, {"field": "contrib"}]
+      }
+    };
+
+    // Chart 10: Advanced Idiom 10 (Scatterplot showing Bioregion Total Area vs Area Protected)
+    const chart10Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 900,
+      "height": 250,
+      "title": {"text": "IBRA Bioregion Total Area vs. Area Protected (ha)", "fontSize": 13},
+      "data": {"values": [
+        {"bioregion": "Great Victoria Desert", "total_area": 42400000, "protected_area": 7500000},
+        {"bioregion": "Kimberley", "total_area": 42300000, "protected_area": 4200000},
+        {"bioregion": "Great Sandy Desert", "total_area": 39300000, "protected_area": 3100000},
+        {"bioregion": "Tanami", "total_area": 25900000, "protected_area": 2100000},
+        {"bioregion": "Cape York Peninsula", "total_area": 11900000, "protected_area": 3100000},
+        {"bioregion": "Nullarbor", "total_area": 19700000, "protected_area": 3500000}
+      ]},
+      "mark": {"type": "point", "filled": true, "size": 140, "color": "#1b4332"},
+      "encoding": {
+        "x": {"field": "total_area", "type": "quantitative", "title": "Total Bioregion Area (ha)"},
+        "y": {"field": "protected_area", "type": "quantitative", "title": "Protected Area (ha)"},
+        "tooltip": [{"field": "bioregion"}, {"field": "total_area"}, {"field": "protected_area"}]
+      }
+    };
+
+    // Embed all visualizations
+    vegaEmbed('#vis-map1', map1Spec).catch(console.error);
+    vegaEmbed('#vis-map2', map2Spec).catch(console.error);
+    vegaEmbed('#vis-map3', map3Spec).catch(console.error);
+    vegaEmbed('#vis-chart4', chart4Spec).catch(console.error);
+    vegaEmbed('#vis-chart5', chart5Spec).catch(console.error);
+    vegaEmbed('#vis-chart6', chart6Spec).catch(console.error);
+    vegaEmbed('#vis-chart7', chart7Spec).catch(console.error);
+    vegaEmbed('#vis-chart8', chart8Spec).catch(console.error);
+    vegaEmbed('#vis-chart9', chart9Spec).catch(console.error);
+    vegaEmbed('#vis-chart10', chart10Spec).catch(console.error);
+  </script>
+</body>
+</html>
