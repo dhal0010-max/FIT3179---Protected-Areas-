@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safeguarding Australia's Natural Heritage | FIT3179 Data Visualization 2</title>
+<!-- Import Vega, Vega-Lite, and Vega-Embed libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.22.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.6.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.21.0"></script>
+<style>
+    :root {
+      --primary-color: #1b4332;
+      --secondary-color: #2d6a4f;
+      --accent-color: #52b788;
+      --ocean-color: #0077b6;
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
+      --text-dark: #212529;
+      --text-muted: #6c757d;
+    }
+body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+header h1 {
+      line-height: 1.15;
+    }
+header {
+      text-align: center;
+      padding: 36px 24px;
+      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #0077b6 100%);
+      color: white;
+      border-radius: 14px;
+      margin-bottom: 32px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+header .meta-banner {
+      text-align: center;
+    }
+header h1 {
+      margin: 0 0 12px 0;
+      font-size: 2.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+header p {
+      margin: 0;
+      font-size: 1rem;
+      opacity: 0.95;
+      max-width: 850px;
+      margin: 0 auto;
+      text-align: left;
+    }
+.meta-banner {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      width: min(100%, 900px);
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+    }
+.meta-banner span {
+      padding: 8px 12px;
+      border-top: 2px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 0 0 6px 6px;
+    }
+.meta-banner strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.82;
+    }
+.card {
+      background: var(--card-bg);
+      padding: 26px;
+      border-radius: 12px;
+      margin-bottom: 28px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e9ecef;
+    }
+.card h2 {
+      color: var(--primary-color);
+      margin-top: 0;
+      font-size: 1.35rem;
+      font-weight: 600;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+.badge-advanced {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      font-size: 0.75rem;
+      background-color: #d8f3dc;
+      color: #1b4332;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: 0.5px;
+      line-height: 1.4;
+    }
+.card h2.paired-idiom-title {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+      row-gap: 4px;
+    }
+.paired-idiom-title .heading-label {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      column-gap: 0.35em;
+      flex: 1;
+      min-width: 0;
+    }
+.paired-idiom-title .heading-number {
+      white-space: nowrap;
+    }
+.paired-idiom-title .heading-text {
+      min-width: 0;
+    }
+.card h2.paired-idiom-title .badge-advanced {
+      justify-self: end;
+      margin-top: 2px;
+    }
+.card-desc {
+      color: #495057;
+      font-size: 0.98rem;
+      margin-bottom: 18px;
+    }
+.card p {
+      font-size: 0.98rem;
+      line-height: 1.6;
+      text-align: left;
+    }
+.grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+@media (max-width: 900px) {
+      .grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .grid-2 > div {
+        min-width: 0;
+      }
+    }
+@media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+      header {
+        padding: 28px 18px;
+      }
+      header h1 {
+        font-size: 2.2rem;
+      }
+      .meta-banner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+      }
+      .card {
+        padding: 18px;
+      }
+      .card h2 {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+.chart-box {
+      width: 100%;
+      min-width: 0;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      padding: 10px 0;
+    }
+.chart-box .vega-embed {
+      width: 100%;
+      min-width: 0;
+    }
+.chart-box canvas,
+.chart-box svg {
+      max-width: 100%;
+    }
+.annotation {
+      background-color: #e8f5e9;
+      border-left: 4px solid var(--secondary-color);
+      padding: 14px 18px;
+      margin-top: 18px;
+      font-size: 0.98rem;
+      border-radius: 0 8px 8px 0;
+      color: #1b4332;
+    }
+.annotation strong {
+      color: var(--primary-color);
+    }
+.annotation-marine {
+      background-color: #e0f2fe;
+      border-left-color: var(--ocean-color);
+      color: #0369a1;
+    }
+.narrative {
+      border-top: 4px solid var(--secondary-color);
+    }
+.narrative h2 {
+      display: block;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 10px;
+      margin-bottom: 8px;
+    }
+.executive h2 {
+      text-align: center;
+    }
+.executive .narrative-point {
+      text-align: center;
+    }
+.executive .narrative-point p {
+      text-align: left;
+    }
+.narrative-intro {
+      max-width: 900px;
+      color: #495057;
+      margin: 0 0 20px;
+      font-size: 0.98rem;
+    }
+.narrative-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+.narrative-grid.three-up {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+.narrative-grid.stewardship-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+.narrative-point {
+      min-width: 0;
+      padding: 16px;
+      background: #f4f8f5;
+      border-radius: 8px;
+      border-left: 3px solid #95d5b2;
+    }
+.narrative-point h3 {
+      margin: 0 0 6px;
+      color: var(--primary-color);
+      font-size: 1rem;
+    }
+.narrative-point p {
+      margin: 0;
+      color: #495057;
+      font-size: 0.98rem;
+    }
+.narrative-point.marine {
+      background: #f0f8fc;
+      border-left-color: #48a9c5;
+    }
+.narrative-point.alert {
+      background: #fff8f1;
+      border-left-color: #e76f51;
+    }
+.narrative-note {
+      margin: 16px 0 0;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+.iucn-key {
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: #f4f8f5;
+      border: 1px solid #d8e7dc;
+      border-radius: 8px;
+    }
+.iucn-key h3 {
+      margin: 0 0 10px;
+      color: var(--primary-color);
+      font-size: 0.98rem;
+    }
+.iucn-key dl {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 8px 14px;
+      margin: 0;
+    }
+.iucn-key dl div {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+.iucn-key dt {
+      flex: 0 0 24px;
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+.iucn-key dd {
+      margin: 0;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+.narrative-roadmap {
+      margin: 0;
+      padding-left: 22px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 24px;
+    }
+.narrative-roadmap li {
+      padding-left: 4px;
+      color: #495057;
+    }
+.story-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: -8px 0 28px;
+    }
+.story-nav a {
+      color: var(--primary-color);
+      background: #e8f5e9;
+      border: 1px solid #cfe5d4;
+      border-radius: 999px;
+      padding: 7px 12px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+.story-nav a:hover,
+.story-nav a:focus-visible {
+      background: var(--primary-color);
+      color: white;
+      outline: 2px solid var(--accent-color);
+      outline-offset: 2px;
+    }
+.chart-key {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 16px;
+      margin: 12px 0 0;
+      padding: 12px 14px;
+      background: #f4f8f5;
+      border: 1px solid #d8e7dc;
+      border-radius: 8px;
+      color: #495057;
+      font-size: 0.6875rem;
+    }
+.chart-key span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+.chart-key .chart-key-title {
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+.vega-embed,
+.vega-embed .vg-tooltip {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+.category-key {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px 14px;
+    }
+.category-key .chart-key-title {
+      grid-column: 1 / -1;
+    }
+.key-swatch {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+.key-swatch.protected {
+      background: var(--secondary-color);
+    }
+.key-swatch.target-gap {
+      background: #f4c95d;
+    }
+.key-swatch.target-range {
+      background: #d8f3dc;
+      border: 1px solid #9bc9a8;
+    }
+.key-swatch.target-marker {
+      width: 3px;
+      height: 16px;
+      background: #e76f51;
+      border-radius: 2px;
+    }
+.key-swatch.domain-land {
+      background: #1b4332;
+    }
+.key-swatch.domain-marine {
+      background: #0077b6;
+    }
+.key-swatch.domain-government {
+      background: #2d6a4f;
+    }
+.key-swatch.domain-joint {
+      background: #52b788;
+    }
+.key-swatch.domain-private {
+      background: #74c69d;
+    }
+.key-swatch.land-gradient {
+      width: 120px;
+      height: 12px;
+      background: linear-gradient(90deg, #d8f3dc, #1b4332);
+      border-radius: 999px;
+    }
+.key-swatch.ocean-gradient {
+      width: 120px;
+      height: 12px;
+      background: linear-gradient(90deg, #deebf7, #08519c);
+      border-radius: 999px;
+    }
+.key-swatch.size-small,
+.key-swatch.size-medium,
+.key-swatch.size-large {
+      flex: 0 0 auto;
+      background: #2d6a4f;
+      border-radius: 50%;
+    }
+.key-swatch.size-small {
+      width: 9px;
+      height: 9px;
+    }
+.key-swatch.size-medium {
+      width: 18px;
+      height: 18px;
+    }
+.key-swatch.size-large {
+      width: 28px;
+      height: 28px;
+    }
+.key-swatch.size-marine {
+      background: #0077b6;
+    }
+.key-swatch.dot-total {
+      background: #495057;
+      border-radius: 50%;
+    }
+.key-swatch.dot-protected {
+      background: #2d6a4f;
+      border-radius: 50%;
+    }
+.key-swatch.iucn-vi { background: #1b4332; }
+.key-swatch.iucn-ii { background: #2d6a4f; }
+.key-swatch.iucn-ia { background: #40916c; }
+.key-swatch.iucn-v { background: #52b788; }
+.key-swatch.iucn-iv { background: #74c69d; }
+.key-swatch.iucn-ib { background: #95d5b2; }
+.key-swatch.iucn-iii { background: #b7e4c7; }
+.key-swatch.remaining {
+      background: #dfe4e1;
+    }
+@media (max-width: 700px) {
+      .narrative-grid,
+      .narrative-grid.three-up,
+      .narrative-grid.stewardship-grid,
+      .narrative-roadmap {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+@media (min-width: 701px) and (max-width: 850px) {
+      .narrative-grid.stewardship-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+footer {
+      text-align: left;
+      padding: 24px;
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      border-top: 1px solid #dee2e6;
+      margin-top: 36px;
+      background: white;
+      border-radius: 10px;
+    }
+footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+.methodology h2 {
+      display: block;
+    }
+.methodology-intro {
+      max-width: 900px;
+      margin: 0 0 18px;
+      color: #495057;
+    }
+.methodology-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+.methodology-block {
+      min-width: 0;
+      padding: 18px;
+      background: #f7f9f8;
+      border: 1px solid #e1e9e4;
+      border-radius: 9px;
+    }
+.methodology h3 {
+      margin: 0 0 10px;
+      color: var(--secondary-color);
+      font-size: 1.02rem;
+    }
+.methodology-block p {
+      margin: 0 0 10px;
+      color: #495057;
+    }
+.methodology-block p:last-child {
+      margin-bottom: 0;
+    }
+.methodology ul {
+      margin: 0;
+      padding-left: 22px;
+    }
+.methodology li {
+      margin-bottom: 10px;
+      color: #343a40;
+    }
+.methodology li:last-child {
+      margin-bottom: 0;
+    }
+.methodology a {
+      color: var(--secondary-color);
+    }
+@media (max-width: 700px) {
+      .methodology-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+    <h1>Safeguarding Australia's Natural Heritage</h1>
+    <p>From national progress to the places, people and gaps behind the numbers.</p>
+    <div class="meta-banner">
+      <span><strong>Data Sources</strong>Protected areas (CAPAD 2024), population (ABS) and ecological regions (IBRA 7.1)</span>
+      <span><strong>Global Goal</strong>Protect at least 30% by 2030</span>
+      <span><strong>At a Glance</strong>12 visualisations</span>
+    </div>
+  </header>
+<section class="card narrative executive" id="national-picture" aria-labelledby="executive-overview-title">
+  <h2 id="executive-overview-title">Executive Overview: The Dual Nature of Australia’s Conservation Estate</h2>
+  <p class="narrative-intro">How does Australia compare with the global ambition to conserve at least 30% of land, inland waters, coasts and oceans by 2030—and what can a national total hide? The <a href="https://www.cbd.int/gbf/targets/3" target="_blank" rel="noopener noreferrer">Kunming–Montreal Global Biodiversity Framework Target 3</a> sets that ambition, while CAPAD 2024 reveals a clear contrast in the area recorded as protected on land and at sea.</p>
+  <div class="narrative-grid">
+    <article class="narrative-point marine">
+      <h3>Marine Protection Exceeds 30% by Area</h3>
+      <p>About <strong>437.2 million hectares</strong> of marine area are recorded as protected—<strong>48.9%</strong> of the 8,939,192 km² Exclusive Economic Zone (EEZ) used in this comparison. That is above 30% by area, but does not tell us how effectively places are managed or whether habitats are well represented.</p>
+    </article>
+    <article class="narrative-point alert">
+      <h3>Terrestrial Protection Remains Below 30%</h3>
+      <p>The state extract records about <strong>173.5 million hectares</strong> as protected, or <strong>22.6%</strong> of the 768,828,859 ha land baseline. Reaching 30% by area would mean a further <strong>57.2 million hectares</strong>—about <strong>7.4 percentage points</strong>.</p>
+    </article>
+  </div>
+  <p class="narrative-note">These figures compare area only; they do not measure how well each place is managed or whether all habitat types are represented. The national land baseline and the sum of the state rows differ slightly; details are in the data notes below. To see how that national contrast is distributed, we begin by comparing protected shares across jurisdictions.</p>
+</section>
+<nav class="story-nav" aria-label="Story Sections">
+  <a href="#national-picture">The National Picture</a>
+  <a href="#state-picture">State Differences</a>
+  <a href="#stewardship-title">Who Cares for These Places?</a>
+  <a href="#bioregional-title">Ecological Gaps</a>
+  <a href="#conclusion-title">What Next?</a>
+</nav>
+<!-- MAP 1 -->
+  <div class="card">
+    <h2>
+      1. Where Is Land Protected?
+      <span class="badge-advanced">Choropleth Map</span>
+    </h2>
+    <p class="card-desc">Start with the proportion: each state is shaded by the share of its land recorded as protected. Darker green means a higher share. The National Reserve System (NRS) is Australia's network of protected places.</p>
+    <div class="chart-box" id="vis-map1" role="img" aria-label="Map shaded by the percentage of each state's land that is protected. A callout highlights the ACT's 55.9 percent."></div>
+    <div class="chart-key" aria-label="Map Legend">
+      <span class="chart-key-title">Legend</span>
+      <span><i class="key-swatch land-gradient"></i>Protected Share of State Land: Lower to Higher</span>
+    </div>
+    <p class="narrative-note"><strong>What this map shows:</strong> Colour compares the protected share within each jurisdiction, not the total hectares protected. The ACT leads this measure at 55.9%, while Queensland is lowest at 9.4%. This proportional view sets up a different question: which places contain the most protected land in absolute area?</p>
+  </div>
+<!-- MAP 2 -->
+  <div class="card">
+    <h2>
+      2. Which States Protect the Most Land?
+      <span class="badge-advanced">Proportional-Symbol Map</span>
+    </h2>
+    <p class="card-desc">Now compare area, not proportion. Larger bubbles represent more protected land in each state or territory, so a large share on the first map does not necessarily mean a large protected area here. Bubble positions are illustrative, not reserve locations.</p>
+    <div class="chart-box" id="vis-map2" role="img" aria-label="Map with bubbles sized by each state's total protected land area. Bubble locations are illustrative, not reserve boundaries."></div>
+    <div class="chart-key" aria-label="Protected Land Bubble Size Legend">
+      <span class="chart-key-title">Legend</span>
+      <span><i class="key-swatch size-small"></i>20 Million ha</span>
+      <span><i class="key-swatch size-medium"></i>40 Million ha</span>
+      <span><i class="key-swatch size-large"></i>60 Million ha</span>
+    </div>
+    <div class="annotation"><strong>Map Note:</strong> Bubble positions are approximate jurisdictional reference points for visual comparison. Bubble sizes represent total protected area in hectares, not exact reserve locations, boundaries, or spatial extents.</div>
+    <p class="narrative-note"><strong>What this map shows:</strong> Bubble size compares total protected hectares. Western Australia has the largest area in the state extract, about 78.67 million hectares. The next map applies the same area-based idiom to marine protection.</p>
+  </div>
+
+<!-- MAP 3 -->
+  <div class="card">
+    <h2>
+      3. How Much Ocean Is Protected?
+      <span class="badge-advanced">Marine Bubble Map</span>
+    </h2>
+    <p class="card-desc">The same area-based comparison extends offshore: bubbles compare protected area in Commonwealth waters, managed by the Australian Government, with state coastal waters. Positions are illustrative, not reserve locations.</p>
+    <div class="chart-box" id="vis-map3" role="img" aria-label="Map with bubbles sized by protected ocean area in Commonwealth and state waters. Bubble locations are illustrative, not reserve boundaries."></div>
+    <div class="chart-key" aria-label="Protected Ocean Bubble Size Legend">
+      <span class="chart-key-title">Legend</span>
+      <span><i class="key-swatch size-small size-marine"></i>100 Million ha</span>
+      <span><i class="key-swatch size-medium size-marine"></i>250 Million ha</span>
+      <span><i class="key-swatch size-large size-marine"></i>400 Million ha</span>
+    </div>
+    <div class="annotation annotation-marine"><strong>Map Note:</strong> Bubble positions are approximate jurisdictional reference points for visual comparison. Bubble sizes represent total marine protected area, not exact reserve locations, boundaries, or spatial extents.</div>
+    <p class="narrative-note"><strong>What this map shows:</strong> Bubble size represents protected marine area by jurisdiction, not the area of a specific reserve. Commonwealth waters account for about 423.5 million hectares—far more than any individual state coastal-water total. Together, the maps reveal contrasting patterns; the next section separates high protected shares from large contributions to the national total.</p>
+  </div>
+
+<section class="card narrative" id="state-picture" aria-labelledby="jurisdiction-analysis-title">
+  <h2 id="jurisdiction-analysis-title">Different States, Different Conservation Stories</h2>
+  <p class="narrative-intro">The maps reveal why “most protected” can mean two different things: the largest share of a jurisdiction's land, or the largest contribution to Australia's protected-land total. The figures below separate those measures.</p>
+  <div class="narrative-grid three-up">
+    <article class="narrative-point">
+      <h3>Highest and Lowest Shares</h3>
+      <p>The ACT has the highest protected share in the state extract at <strong>55.9%</strong>, followed by Tasmania at <strong>42.8%</strong>; Queensland has the lowest share at <strong>9.4%</strong>. A high percentage does not necessarily mean the most hectares.</p>
+    </article>
+    <article class="narrative-point">
+      <h3>The Largest Protected Areas</h3>
+      <p>By area, Western Australia leads with about <strong>78.67 million hectares</strong>, or <strong>45.3%</strong> of the national protected-land total used here. WA, the Northern Territory (<strong>33.2 million hectares; 19.1%</strong>) and South Australia (<strong>30.0 million hectares; 17.3%</strong>) together account for about <strong>81.7%</strong>.</p>
+    </article>
+    <article class="narrative-point marine">
+      <h3>Ocean Areas Managed Nationally</h3>
+      <p>Offshore, Commonwealth waters account for about <strong>423.5 million hectares</strong> of protected marine area in the jurisdiction extract—far more than any individual state coastal-water total.</p>
+    </article>
+  </div>
+  <p class="narrative-note">The state land totals in Chart 8 come from a project file whose exact source table and boundary year are not recorded; see the data notes for this limitation. Having distinguished protected share from total protected area, the next pair asks who manages these places and how land and ocean compare with the 30% benchmark.</p>
+</section>
+
+<!-- CHARTS 4 & 5 -->
+  <div class="card grid-2">
+    <div>
+      <h2 class="paired-idiom-title idiom-4-title">
+        <span class="heading-label"><span class="heading-number">4.</span><span class="heading-text">Who Helps Look After Protected Land?</span></span>
+        <span class="badge-advanced">Treemap</span>
+      </h2>
+      <p class="card-desc">Beyond where protection occurs, who is recorded as caring for the land? Each rectangle represents a governance category; its area shows its share of the total. Hover for details.</p>
+      <div class="chart-box" id="vis-chart4" role="img" aria-label="Rectangles compare the share of protected land managed under each governance model."></div>
+      <p class="narrative-note"><strong>What this treemap shows:</strong> Rectangle area encodes each governance category's share of the recorded terrestrial protected-area total. IPAs are the largest category at 49.5% (85.86 million hectares); government areas account for 38.4% (66.51 million hectares). The paired gauge puts the national land and ocean shares against a common benchmark.</p>
+    </div>
+    <div>
+      <h2 class="paired-idiom-title">
+        <span class="heading-label"><span class="heading-number">5.</span><span class="heading-text">How Close Are Land and Ocean to the 30% Goal?</span></span>
+        <span class="badge-advanced">Radial Target Gauge</span>
+      </h2>
+      <p class="card-desc">The rings return to the national comparison: each shows the share of land or ocean recorded as protected. A full ring is 100%; the red marker marks 30% as a visual benchmark.</p>
+      <div class="chart-box" id="vis-chart5" role="img" aria-label="Progress rings show 22.6 percent of land and 48.9 percent of ocean protected. Red markers show the 30 percent goal."></div>
+      <div class="chart-key" aria-label="Gauge Legend">
+        <span class="chart-key-title">Legend</span>
+        <span><i class="key-swatch domain-land"></i>Terrestrial Protection</span>
+        <span><i class="key-swatch domain-marine"></i>Marine Protection</span>
+        <span><i class="key-swatch target-marker"></i>30% Target Benchmark</span>
+      </div>
+      <p class="narrative-note"><strong>What this gauge shows:</strong> Ring length encodes protected share, while the red marker indicates 30%. Land is at 22.6%, 7.4 percentage points below the marker; ocean is at 48.9%, 18.9 points above it. The comparison describes area, not management effectiveness. Next, we look at who manages protected places and what those areas are managed for.</p>
+    </div>
+  </div>
+<section class="card narrative" aria-labelledby="stewardship-title">
+  <h2 id="stewardship-title">Who Cares for These Places? Indigenous Leadership and Different Types of Protection</h2>
+  <p class="narrative-intro">Governance is one part of the story; management purpose is another. These records show how protected areas are grouped by governance and by IUCN category—an international classification of management objectives. Neither classification, by itself, measures management effectiveness.</p>
+  <div class="narrative-grid stewardship-grid">
+    <article class="narrative-point">
+      <h3>Indigenous Protected Areas</h3>
+      <p>Indigenous Protected Areas (IPAs) account for about <strong>49.5%</strong> of protected land in the governance data (<strong>85.86 million hectares</strong>), compared with <strong>38.4%</strong> (<strong>66.51 million hectares</strong>) in the government category. These dataset categories cannot capture every form or outcome of caring for Country.</p>
+    </article>
+    <article class="narrative-point">
+      <h3>Terrestrial IUCN Categories</h3>
+      <p>On land, the largest area is Category VI, where sustainable use is allowed: <strong>99.94 million hectares</strong> (<strong>57.6%</strong> of the category data). National parks (Category II) account for <strong>39.56 million hectares</strong> (<strong>22.8%</strong>).</p>
+    </article>
+    <article class="narrative-point marine">
+      <h3>Marine IUCN Categories</h3>
+      <p>At sea, Category II (national parks and sanctuaries) covers <strong>181.45 million hectares</strong>, while Category IV (habitat and species management areas) covers <strong>122.79 million hectares</strong>.</p>
+    </article>
+  </div>
+  <p class="narrative-note">Categories describe stated management objectives, not a score of how effective a reserve is. Their totals differ slightly from the supplied national total.</p>
+  <div class="iucn-key" aria-label="IUCN Category Guide for Charts 6 and 7">
+    <h3>IUCN Category Guide for the Next Two Charts</h3>
+    <dl>
+      <div><dt>Ia</dt><dd>Strict Nature Reserve</dd></div>
+      <div><dt>Ib</dt><dd>Wilderness Area</dd></div>
+      <div><dt>II</dt><dd>National Park</dd></div>
+      <div><dt>III</dt><dd>Natural Monument</dd></div>
+      <div><dt>IV</dt><dd>Habitat or Species Management</dd></div>
+      <div><dt>V</dt><dd>Protected Landscape</dd></div>
+      <div><dt>VI</dt><dd>Sustainable Use</dd></div>
+    </dl>
+  </div>
+  <p class="narrative-note">With the category key in place, the next pair shows how these management objectives are represented across terrestrial and marine protected areas.</p>
+</section>
+
+<!-- CHARTS 6 & 7 -->
+  <div class="card grid-2">
+    <div>
+      <h2>
+        6. What Is Protected Land Managed For?
+        <span class="badge-advanced">Treemap</span>
+      </h2>
+      <p class="card-desc">This treemap breaks terrestrial protection down by IUCN category. Larger rectangles represent more area; the categories describe management objectives, not conservation outcomes.</p>
+      <div class="chart-box" id="vis-chart6" role="img" aria-label="Rectangles compare protected land area across seven management categories."></div>
+      <p class="narrative-note"><strong>What this treemap shows:</strong> Rectangle area is proportional to protected land in each IUCN category. Category VI (Sustainable Use) is largest at 57.6% (99.94 million hectares), followed by Category II (National Park) at 22.8% (39.56 million hectares). The heatmap tests whether the marine category pattern is similar across jurisdictions.</p>
+      <div class="chart-key category-key" aria-label="Chart 6 Category Legend">
+        <span class="chart-key-title">Legend · IUCN Category</span>
+        <span><i class="key-swatch iucn-vi"></i>VI · Sustainable Use</span>
+        <span><i class="key-swatch iucn-ii"></i>II · National Park</span>
+        <span><i class="key-swatch iucn-ia"></i>Ia · Strict Nature Reserve</span>
+        <span><i class="key-swatch iucn-v"></i>V · Protected Landscape</span>
+        <span><i class="key-swatch iucn-iv"></i>IV · Habitat/Species Management</span>
+        <span><i class="key-swatch iucn-ib"></i>Ib · Wilderness Area</span>
+        <span><i class="key-swatch iucn-iii"></i>III · Natural Monument</span>
+      </div>
+      <p class="narrative-note">Hover over a rectangle to see the category's protected area and share.</p>
+    </div>
+    <div>
+      <h2>
+        7. How Is Protected Ocean Managed?
+        <span class="badge-advanced">Heatmap</span>
+      </h2>
+      <p class="card-desc">The same category comparison offshore: each cell shows protected ocean area by IUCN category and jurisdiction. Darker blue indicates a larger area.</p>
+      <div class="chart-box" id="vis-chart7" role="img" aria-label="Colour grid comparing ocean protection categories in Australian Government and state waters; darker blue means a larger area."></div>
+      <div class="chart-key" aria-label="Heatmap Colour Legend">
+        <span class="chart-key-title">Legend</span>
+        <span><i class="key-swatch ocean-gradient"></i>Protected Area per Category: Lower to Higher</span>
+      </div>
+      <p class="narrative-note">Use the category guide immediately above to read the column labels. Hover over a cell for its area and reserve count. <strong>What this heatmap shows:</strong> Colour intensity encodes area for each category–jurisdiction combination. Category II is largest overall (181.45 million hectares), followed by Category IV (122.79 million hectares); Commonwealth waters account for most of both totals. These category patterns describe management classifications; next we compare protected area with each jurisdiction's total land.</p>
+    </div>
+  </div>
+<!-- CHARTS 8 & 9 -->
+  <div class="card grid-2">
+    <div>
+      <h2>
+        8. How Much Land Is Protected in Each State?
+        <span class="badge-advanced">Dumbbell Plot</span>
+      </h2>
+      <p class="card-desc">To put state protection in scale, grey dots show each jurisdiction's total land area and green dots its protected area; the line connects the two. Areas are in millions of hectares.</p>
+      <div class="chart-box" id="vis-chart8" role="img" aria-label="Connected dots compare total land area and protected land area for each state and territory."></div>
+      <p class="narrative-note"><strong>Australian Capital Territory:</strong> about 0.24 million hectares of land, including 0.13 million hectares protected (55.9%). Its closely spaced dots are near the left edge of the chart.</p>
+      <div class="chart-key" aria-label="Connected Dot Plot Legend">
+        <span class="chart-key-title">Legend</span>
+        <span><i class="key-swatch dot-total"></i>Total Land Area</span>
+        <span><i class="key-swatch dot-protected"></i>Protected Land Area</span>
+      </div>
+      <p class="narrative-note"><strong>What this dumbbell plot shows:</strong> Each connector spans a jurisdiction's total land area and its protected area; a larger gap means more unprotected hectares. Western Australia has the largest total and protected area (about 78.67 million hectares protected), while the ACT's total is small despite its high protected share. The next chart changes the denominator to compare each jurisdiction's contribution to the national protected-land total.</p>
+    </div>
+    <div>
+      <h2>
+        9. Which States Contribute Most Protected Land?
+        <span class="badge-advanced">Ranked Bars</span>
+      </h2>
+      <p class="card-desc">The previous chart compared protected area with each jurisdiction's own land area. Here, bars instead rank each state's contribution to Australia's recorded protected-land total.</p>
+      <div class="chart-box" id="vis-chart9" role="img" aria-label="Ranked bar chart showing each state and territory's percentage contribution to Australia's terrestrial protected-area total."></div>
+      <p class="narrative-note"><strong>What this ranked bar chart shows:</strong> Bar length encodes each state's share of the national protected-land total. Western Australia contributes 45.3%; WA, the Northern Territory and South Australia together contribute 81.7%. The ACT contributes just 0.08%, too little for its bar to be clear at this scale. With both denominators established, the next chart compares state shares with the 30% benchmark.</p>
+    </div>
+  </div>
+<!-- CHART 10 -->
+  <div class="card">
+    <h2>
+      10. How Does Each State Compare with the 30% Goal?
+      <span class="badge-advanced">Bullet Chart</span>
+    </h2>
+    <p class="card-desc">Having compared state shares and national contributions, we can now place each state beside the 30% global ambition. Bars show the share of state land recorded as protected; the line is a benchmark for comparison, not a separate state-level requirement.</p>
+    <div class="chart-box" id="vis-chart10" role="img" aria-label="Bullet chart comparing the percentage of land protected in each state and territory with a 30 percent global benchmark. The benchmark is for comparison and is not a state-level target."></div>
+    <div class="chart-key" aria-label="Bullet Chart Legend">
+      <span class="chart-key-title">Legend</span>
+      <span><i class="key-swatch remaining"></i>Below the 30% Comparison Line</span>
+      <span><i class="key-swatch protected"></i>Protected Share</span>
+      <span><i class="key-swatch target-range"></i>Area Beyond the Comparison Line</span>
+    </div>
+    <p class="narrative-note"><strong>What this bullet chart shows:</strong> Each bar gives the protected share of that state's land; the vertical line is the 30% comparison benchmark. Four jurisdictions in this extract are above 30%: the ACT, Tasmania, Western Australia and South Australia. Since state averages can hide differences among environments, the next section looks within ecological regions.</p>
+  </div>
+<section class="card narrative" aria-labelledby="bioregional-title">
+  <h2 id="bioregional-title">Protection Across Australia's Ecological Regions</h2>
+  <p class="narrative-intro">State averages still cannot tell us whether protection is spread across different environments. The regional data offers another lens: it shows 15 Australian ecological regions in this project extract against the historical 17% land benchmark from CBD Aichi Target 11. This is a historical comparator, not a current target for each region.</p>
+  <div class="narrative-grid">
+    <article class="narrative-point">
+      <h3>Higher Coverage in the Extract</h3>
+      <p>In this extract, MacDonnell Ranges (<strong>81.3%</strong>), Nullarbor (<strong>54.9%</strong>), Wet Tropics (<strong>53.5%</strong>) and Great Sandy Desert (<strong>49.9%</strong>) are above the 17% comparator.</p>
+    </article>
+    <article class="narrative-point alert">
+      <h3>Regions Well Below the Comparator</h3>
+      <p>Mitchell Grass Downs (<strong>1.56%</strong>), Finke (<strong>4.6%</strong>), Murchison (<strong>7.0%</strong>) and Pilbara (<strong>8.8%</strong>) are below 17%. These differences point to places for further assessment and locally led conservation planning.</p>
+    </article>
+  </div>
+  <p class="narrative-note">Aichi Target 11 was a global goal for 2020. IBRA 7.1 is Australia's system for mapping ecological regions. The 15 rows reflect the project data provided, not the full national set.</p>
+</section>
+<!-- CHART 11 -->
+  <div class="card">
+    <h2>
+      11. Which Ecological Regions Have Less Protection?
+      <span class="badge-advanced">Dot Plot · Regional Comparison</span>
+    </h2>
+    <p class="card-desc">Each row is one ecological region; its dot shows the share recorded as protected. The dashed line marks the historical 17% comparator described above, not today's 30% by 2030 ambition.</p>
+    <div class="chart-box" id="vis-chart11" role="img" aria-label="Chart comparing the share of protected land in 15 Australian ecological regions. A dashed line marks the historical 17 percent Aichi Target 11 benchmark."></div>
+    <p class="narrative-note"><strong>What this dot plot shows:</strong> Each dot marks the protected share for one region; its position relative to the dashed 17% line shows whether it is above or below the historical comparator. Mitchell Grass Downs is lowest at 1.56%, while MacDonnell Ranges is highest at 81.3%. These values apply to the 15 records supplied, not all Australian regions. The final idiom turns the national land gap into an area-based picture.</p>
+    <div class="annotation">
+      <strong>Benchmark Note:</strong> The 17% line represents the land and inland-water component of the historical <a href="https://www.cbd.int/aichi-targets/target/11" target="_blank" rel="noopener noreferrer">Convention on Biological Diversity (CBD) Aichi Target 11</a> (set for 2020). It is shown as a comparison benchmark for these regions, not as the current global 30×30 goal under <a href="https://www.cbd.int/gbf/targets/3" target="_blank" rel="noopener noreferrer">CBD Kunming–Montreal Global Biodiversity Framework Target 3</a>, or as evidence that each region has a separate legal target.
+    </div>
+  </div>
+<!-- CHART 12 -->
+  <div class="card">
+    <h2>
+      12. What Would It Take to Reach 30% Protection on Land?
+      <span class="badge-advanced">Waffle Chart</span>
+    </h2>
+    <p class="card-desc">The final chart turns the terrestrial gap into 100 tiles, each representing about 1% of Australia's land area: green is protected now, gold is the approximate gap to 30%, and grey is the area beyond that benchmark.</p>
+    <div class="chart-box" id="vis-chart12" role="img" aria-label="One hundred-tile chart: about 23 tiles represent the current 22.6 percent protected land share, 7 gold tiles show the approximate gap to 30 percent, and the remaining 70 tiles represent land beyond the benchmark."></div>
+    <div class="chart-key" aria-label="Waffle Chart Legend">
+      <span class="chart-key-title">Legend</span>
+      <span><i class="key-swatch protected"></i>Protected Now (22.6%)</span>
+      <span><i class="key-swatch target-gap"></i>Approximate Gap to 30% (7.4 Percentage Points)</span>
+      <span><i class="key-swatch remaining"></i>Area Beyond the 30% Benchmark</span>
+    </div>
+    <p class="narrative-note"><strong>What this waffle chart shows:</strong> Each tile represents about 1% of Australia's land area: 23 green tiles approximate the current 22.6% protected share, and 7 gold tiles show the gap to 30%. That gap is about 7.4 percentage points, or 57.2 million hectares using the supplied baseline. Tiles are rounded to whole percentages. This closes the visual story by translating the benchmark into area; the priorities below summarize questions raised by these patterns.</p>
+  </div>
+<section class="card narrative" aria-labelledby="conclusion-title">
+  <h2 id="conclusion-title">What Next? Priorities for 2030</h2>
+  <p class="narrative-intro">Together, the charts show extensive recorded marine protection, a substantial role for Indigenous Protected Areas, and uneven terrestrial protection across states and ecological regions. These patterns suggest questions for further work—not forecasts or official policy recommendations. The methodology that follows explains the data sources, definitions and limitations behind those comparisons.</p>
+  <ol class="narrative-roadmap">
+    <li><strong>Understand Marine Protection:</strong> Continue assessing management and habitat representation across the large recorded marine estate, including its major Category II and IV areas.</li>
+    <li><strong>Explore the Terrestrial Gap:</strong> Consider pathways toward the 30% by-area ambition alongside ecological representation, connectivity, and effective management.</li>
+    <li><strong>Recognise Indigenous Stewardship:</strong> Build long-term partnerships and resourcing that support Indigenous Protected Areas and Indigenous-led conservation.</li>
+    <li><strong>Investigate Regional Gaps:</strong> Use results such as Mitchell Grass Downs to guide further assessment and locally led conservation planning.</li>
+  </ol>
+  <p class="narrative-note">Ultimately, lasting conservation depends not only on how much land and sea is protected, but also on what is protected, how it is cared for, and whose knowledge guides that work.</p>
+</section>
+<section class="card methodology" aria-labelledby="methodology-title">
+  <h2 id="methodology-title">Methodology &amp; Data Footnotes</h2>
+  <p class="methodology-intro">This section follows the same order as the story: first the source data, then how the headline percentages are calculated, followed by geographic scope and known limitations. Figures should be read as area-based comparisons, not as measures of conservation effectiveness.</p>
+  <div class="methodology-grid">
+    <article class="methodology-block">
+      <h3>1. Data Sources and Reference Periods</h3>
+      <ul>
+        <li><strong>Terrestrial Protected Areas:</strong> <a href="https://www.dcceew.gov.au/environment/land/nrs/science/capad" target="_blank" rel="noopener noreferrer">DCCEEW CAPAD 2024 Terrestrial Summary Tables, Table 1</a>. CAPAD is Australia's national protected-areas database. “2024” is the dataset edition/reference year; consult the DCCEEW download metadata for the table's exact publication date and any field-specific reporting cut-off.</li>
+        <li><strong>Marine Protected Areas:</strong> <a href="https://www.dcceew.gov.au/environment/land/nrs/science/capad" target="_blank" rel="noopener noreferrer">DCCEEW CAPAD Marine 2024 Summary Data Tables, Table 1 and Footnote 4</a>. The tables cover Commonwealth and state waters; Footnote 4 documents the EEZ denominator and external-territory scope.</li>
+        <li><strong>Ecological Region Boundaries:</strong> <a href="https://www.dcceew.gov.au/environment/land/nrs/science/ibra" target="_blank" rel="noopener noreferrer">IBRA 7.1</a>, published in 2025 as an update to IBRA 7.0. Chart 11 compares CAPAD protection data against these boundaries.</li>
+        <li><strong>Population:</strong> <a href="https://www.abs.gov.au/statistics/people/population/regional-population/2023-24" target="_blank" rel="noopener noreferrer">Australian Bureau of Statistics (ABS), Regional Population, 2023–24 (catalogue 3218.0)</a>; the chart's population field is labeled 2024.</li>
+        <li><strong>State Land Area Baselines:</strong> The supplied CSV does not identify its source table, publication year, or boundary vintage. <a href="https://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/1301.0Main+Features12012" target="_blank" rel="noopener noreferrer">ABS Year Book Australia (catalogue 1301.0)</a> and the <a href="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3" target="_blank" rel="noopener noreferrer">Australian Statistical Geography Standard (ASGS)</a> are relevant references, but the exact source series has not been verified.</li>
+      </ul>
+    </article>
+    <article class="methodology-block">
+      <h3>2. How the Headline Percentages Are Calculated</h3>
+      <ul>
+        <li><strong>Terrestrial protection:</strong> Protected terrestrial area ÷ 768,828,859 ha × 100. Using the state extract total (173,478,189 ha) gives 22.56%, rounded to 22.6%.</li>
+        <li><strong>State/territory contribution to the NRS:</strong> Jurisdiction protected area ÷ 173,493,468 ha × 100.</li>
+        <li><strong>Marine protection:</strong> Protected marine area ÷ 8,939,192 km² × 100. The jurisdiction extract totals 437,204,396 ha (4,372,043.96 km²), giving 48.91%, rounded to 48.9%.</li>
+        <li><strong>Terrestrial gap to 30%:</strong> The difference between the 22.6% protected share and the 30% comparison benchmark is about 7.4 percentage points, or approximately 57.2 million hectares using the supplied land baseline.</li>
+      </ul>
+    </article>
+    <article class="methodology-block">
+      <h3>3. Geographic Scope and Area Measures</h3>
+      <ul>
+        <li>CAPAD hectare figures use the spatial <code>GIS_AREA</code> measure in an Albers Equal Area projection for Australia, rather than gazetted legal boundary definitions. Antarctic territory uses WGS 1984 Antarctic Polar Stereographic.</li>
+        <li>The 8,939,192 km² marine denominator is documented in <a href="https://www.dcceew.gov.au/environment/land/nrs/science/capad" target="_blank" rel="noopener noreferrer">Footnote 4 of the DCCEEW CAPAD Marine 2024 Summary Data Tables</a>: “The total EEZ area of 8,939,192 km2 is based on the ratification of Perth 97 treaty EEZ. It includes external territories of Norfolk Island, Christmas Island, Cocos (Keeling) Islands and Heard Island and McDonald Islands.” Thus, the comparison includes the mainland EEZ and those four external territories.</li>
+        <li><a href="https://www.ga.gov.au/scientific-topics/marine-and-coastal/maritime-jurisdiction/knowledge/maritime-zones" target="_blank" rel="noopener noreferrer">Geoscience Australia's maritime jurisdiction boundary information</a> is the geographic reference for maritime zones. State coastal waters follow its coastal-water boundaries and exclude tidal estuary components.</li>
+      </ul>
+    </article>
+    <article class="methodology-block">
+      <h3>4. Data Checks and Limitations</h3>
+      <ul>
+        <li><strong>Land-area baseline:</strong> The project uses 768,828,859 ha as its supplied national baseline. <a href="https://www.ga.gov.au/scientific-topics/national-location-information/geography/areas-of-australia" target="_blank" rel="noopener noreferrer">Geoscience Australia</a> reports 768,828,700 ha (7,688,287 km²), a difference of 159 ha.</li>
+        <li><strong>Protected-area totals:</strong> The supplied national denominator is 173,493,468 ha. Current <code>state_protection.csv</code> rows sum to 173,478,189 ha (15,279 ha less); <code>iucn_categories.csv</code> sums to 173,482,817 ha (10,651 ha less). The two extracts differ by 4,628 ha. The available files do not establish why, so no overlap, projection, or rounding explanation is assumed. The national denominator is not the sum of current state rows.</li>
+        <li><strong>Spatial processing:</strong> The project CSVs do not include enough processing metadata to characterize overlap treatment in every exported summary.</li>
+        <li><strong>Interpretation:</strong> Area percentages measure how much area is recorded as protected. They do not measure management effectiveness or habitat representation, and the 17% regional reference is a historical 2020 benchmark, not a current target for each region.</li>
+      </ul>
+    </article>
+  </div>
+</section>
+<footer>
+    <p><strong>FIT3179 Data Visualization 2</strong> | Project: Safeguarding Australia's Natural Heritage</p>
+    <p><strong>Author:</strong> Damien Michael Hall | <strong>Page Updated:</strong> 7 November 2026</p>
+    <p>Data and Framework Sources: <a href="https://www.dcceew.gov.au/environment/land/nrs/science/capad" target="_blank" rel="noopener noreferrer">CAPAD 2024 (DCCEEW)</a> | <a href="https://www.abs.gov.au/statistics/people/population/regional-population/2023-24" target="_blank" rel="noopener noreferrer">Australian Bureau of Statistics Regional Population (3218.0)</a> | <a href="https://www.dcceew.gov.au/environment/land/nrs/science/ibra" target="_blank" rel="noopener noreferrer">IBRA 7.1 Ecological Regions</a> | <a href="https://www.cbd.int/gbf/targets/3" target="_blank" rel="noopener noreferrer">Global Biodiversity Framework Target 3</a></p>
+    <p><strong>AI Use Acknowledgement:</strong> Generative AI assisted with editing narrative text and developing HTML, CSS, and Vega-Lite visualisation code. Data sources and calculations are documented in the methodology section.</p>
+  </footer>
+<script>
+    // Chart 1: State Terrestrial Choropleth Map
+    const map1Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 380,
+      "title": {"text": "Land Protection (%)", "fontSize": 13, "color": "#1b4332"},
+      "projection": {"type": "mercator", "center": [134, -28.5], "scale": 540},
+      "layer": [
+        {
+          "data": {
+            "url": "australia-states.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "transform": [{
+            "lookup": "properties.STATE_NAME",
+            "from": {
+              "data": {"url": "data/state_protection.csv"},
+              "key": "state",
+              "fields": ["pct", "area_ha", "code", "nrs_contribution_pct"]
+            }
+          }],
+          "mark": {"type": "geoshape", "stroke": "#ffffff", "strokeWidth": 1.2},
+          "encoding": {
+            "color": {
+              "field": "pct",
+              "type": "quantitative",
+              "title": "Protected Area (%)",
+              "scale": {"scheme": "greens"}
+            },
+            "tooltip": [
+              {"field": "properties.STATE_NAME", "type": "nominal", "title": "Jurisdiction"},
+              {"field": "pct", "type": "quantitative", "title": "Protected Coverage (%)", "format": ".1f"},
+              {"field": "area_ha", "type": "quantitative", "title": "Protected Area (ha)", "format": ","},
+              {"field": "nrs_contribution_pct", "type": "quantitative", "title": "NRS Share (%)", "format": ".2f"}
+            ]
+          }
+        },
+        {
+          "data": {"values": [{"lon": 149.13, "lat": -35.3, "label_lon": 153.2, "label_lat": -32.3, "label": "ACT Leads: 55.9%"}]},
+          "mark": {"type": "rule", "color": "#1b4332", "size": 1.5},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"},
+            "longitude2": {"field": "label_lon"},
+            "latitude2": {"field": "label_lat"}
+          }
+        },
+        {
+          "data": {"values": [{"lon": 149.13, "lat": -35.3}]},
+          "mark": {"type": "point", "filled": true, "size": 55, "color": "#1b4332", "stroke": "white", "strokeWidth": 1.5},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"}
+          }
+        },
+        {
+          "data": {"values": [{"lon": 153.2, "lat": -32.3, "label": "ACT Leads: 55.9%"}]},
+          "mark": {"type": "text", "align": "left", "dx": 4, "dy": -3, "fontSize": 13, "fontWeight": "bold", "color": "#102a20"},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"},
+            "text": {"field": "label"}
+          }
+        }
+      ]
+    };
+// Chart 2: Proportional Symbol Map for Terrestrial States
+    const map2Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 380,
+      "title": {"text": "Protected Land Area by State", "fontSize": 14, "color": "#1b4332"},
+      "projection": {"type": "mercator", "center": [134, -28.5], "scale": 540},
+      "layer": [
+        {
+          "data": {
+            "url": "australia-states.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "mark": {"type": "geoshape", "fill": "#e9ecef", "stroke": "#adb5bd"}
+        },
+        {
+          "data": {"url": "data/state_protection.csv"},
+          "transform": [
+            {
+              "calculate": "datum.code === 'ACT' ? 149.13 : datum.code === 'NSW' ? 147.0 : datum.code === 'NT' ? 133.0 : datum.code === 'QLD' ? 144.0 : datum.code === 'SA' ? 135.0 : datum.code === 'TAS' ? 146.5 : datum.code === 'VIC' ? 144.0 : 122.0",
+              "as": "lon"
+            },
+            {
+              "calculate": "datum.code === 'ACT' ? -35.3 : datum.code === 'NSW' ? -32.0 : datum.code === 'NT' ? -19.0 : datum.code === 'QLD' ? -22.0 : datum.code === 'SA' ? -30.0 : datum.code === 'TAS' ? -42.0 : datum.code === 'VIC' ? -37.0 : -25.0",
+              "as": "lat"
+            }
+          ],
+          "mark": {"type": "circle", "opacity": 0.85, "color": "#2d6a4f"},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"},
+            "size": {
+              "field": "area_ha",
+              "type": "quantitative",
+              "title": "Protected Area (ha)",
+              "scale": {"range": [50, 2000]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "state", "type": "nominal", "title": "State/Territory"},
+              {"field": "area_ha", "type": "quantitative", "title": "Area (ha)", "format": ","},
+              {"field": "pct", "type": "quantitative", "title": "Protected (%)", "format": ".1f"}
+            ]
+          }
+        }
+      ]
+    };
+// Chart 3: Marine Protected Area Geospatial Bubble Map
+    const map3Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 380,
+      "title": {"text": "Protected Ocean by Size", "fontSize": 14, "color": "#0077b6"},
+      "projection": {"type": "mercator", "center": [134, -28.5], "scale": 540},
+      "layer": [
+        {
+          "data": {
+            "url": "australia-states.geojson",
+            "format": {"type": "json", "property": "features"}
+          },
+          "mark": {"type": "geoshape", "fill": "#e9ecef", "stroke": "#adb5bd"}
+        },
+        {
+          "data": {"url": "data/marine_jurisdiction.csv"},
+          "transform": [
+            {
+              "calculate": "datum.jurisdiction === 'Commonwealth Waters' ? 130.0 : datum.jurisdiction === 'NSW' ? 152.0 : datum.jurisdiction === 'NT' ? 131.0 : datum.jurisdiction === 'QLD' ? 150.0 : datum.jurisdiction === 'SA' ? 136.0 : datum.jurisdiction === 'TAS' ? 148.0 : datum.jurisdiction === 'VIC' ? 145.0 : 113.0",
+              "as": "lon"
+            },
+            {
+              "calculate": "datum.jurisdiction === 'Commonwealth Waters' ? -12.0 : datum.jurisdiction === 'NSW' ? -33.5 : datum.jurisdiction === 'NT' ? -11.5 : datum.jurisdiction === 'QLD' ? -19.0 : datum.jurisdiction === 'SA' ? -36.5 : datum.jurisdiction === 'TAS' ? -44.0 : datum.jurisdiction === 'VIC' ? -39.0 : -28.0",
+              "as": "lat"
+            }
+          ],
+          "mark": {"type": "circle", "opacity": 0.8, "color": "#0077b6"},
+          "encoding": {
+            "longitude": {"field": "lon", "type": "quantitative"},
+            "latitude": {"field": "lat", "type": "quantitative"},
+            "size": {
+              "field": "assigned_area_mha",
+              "type": "quantitative",
+              "title": "Area (Million ha)",
+              "scale": {"range": [20, 2000]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "jurisdiction", "type": "nominal", "title": "Jurisdiction"},
+              {"field": "assigned_area_mha", "type": "quantitative", "title": "Area (Million ha)", "format": ".2f"},
+              {"field": "number", "type": "quantitative", "title": "Reserve Count"}
+            ]
+          }
+        }
+      ]
+    };
+// Chart 4: Governance Stewardship Model Treemap
+    const chart4Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 400,
+      "title": {"text": "How Australia's Protected Land Is Managed", "fontSize": 13, "color": "#1b4332"},
+      "data": {"url": "data/governance_share.csv"},
+      "transform": [
+        {"calculate": "datum.governance === 'Community (IPAs)' ? 0 : datum.governance === 'Private Conservation' ? 49.48 + 50.52 * 6.06 / 12.17 : 49.48", "as": "x0"},
+        {"calculate": "datum.governance === 'Community (IPAs)' ? 49.48 : datum.governance === 'Joint Management' ? 49.48 + 50.52 * datum.share / 12.17 : 100", "as": "x1"},
+        {"calculate": "datum.governance === 'Joint Management' || datum.governance === 'Private Conservation' ? 38.35 / 50.52 * 100 : 0", "as": "y0"},
+        {"calculate": "datum.governance === 'Community (IPAs)' || datum.governance === 'Joint Management' || datum.governance === 'Private Conservation' ? 100 : 38.35 / 50.52 * 100", "as": "y1"},
+        {"calculate": "(datum.x0 + datum.x1) / 2", "as": "label_x"},
+        {"calculate": "(datum.y0 + datum.y1) / 2", "as": "label_y"},
+        {"calculate": "datum.governance === 'Community (IPAs)' ? 'Community IPAs' : datum.governance === 'Joint Management' ? 'Joint' : datum.governance === 'Private Conservation' ? 'Private' : datum.governance", "as": "model_label"},
+        {"calculate": "format(datum.share, '.1f') + '%'", "as": "share_label"}
+      ],
+      "layer": [
+        {
+          "mark": {"type": "rect", "stroke": "#ffffff", "strokeWidth": 2},
+          "encoding": {
+            "x": {"field": "x0", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}, "axis": null},
+            "x2": {"field": "x1"},
+            "y": {"field": "y0", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}, "axis": null},
+            "y2": {"field": "y1"},
+            "color": {
+              "field": "governance",
+              "type": "nominal",
+              "scale": {"range": ["#1b4332", "#2d6a4f", "#52b788", "#74c69d"]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "governance", "type": "nominal", "title": "Governance Model"},
+              {"field": "share", "type": "quantitative", "title": "Share (%)", "format": ".2f"},
+              {"field": "area_ha", "type": "quantitative", "title": "Area (ha)", "format": ","}
+            ]
+          }
+        },
+        {
+          "mark": {"type": "text", "fontSize": 10, "fontWeight": "bold", "dy": -7, "opacity": 0.95},
+          "encoding": {
+            "x": {"field": "label_x", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "y": {"field": "label_y", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "text": {"field": "model_label"},
+            "color": {"condition": {"test": "datum.governance === 'Community (IPAs)' || datum.governance === 'Government'", "value": "white"}, "value": "#17324d"}
+          }
+        },
+        {
+          "mark": {"type": "text", "fontSize": 11, "fontWeight": "bold", "dy": 8, "opacity": 0.9},
+          "encoding": {
+            "x": {"field": "label_x", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "y": {"field": "label_y", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "text": {"field": "share_label"},
+            "color": {"condition": {"test": "datum.governance === 'Community (IPAs)' || datum.governance === 'Government'", "value": "white"}, "value": "#17324d"}
+          }
+        }
+      ]
+    };
+// Chart 5: Terrestrial vs Marine 30x30 Radial Target Gauge
+    const chart5Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 320,
+      "title": {"text": "Land and Ocean Protection vs. the 30% Goal", "fontSize": 13, "color": "#1b4332"},
+      "data": {
+        "values": [
+          {"domain": "Terrestrial Protection", "rate": 22.6, "start": 0, "full": 100, "targetStart": 29, "targetEnd": 31},
+          {"domain": "Marine Protection", "rate": 48.9, "start": 0, "full": 100, "targetStart": 29, "targetEnd": 31}
+        ]
+      },
+      "layer": [
+        {
+          "transform": [{"filter": "datum.domain === 'Marine Protection'"}],
+          "mark": {"type": "arc", "innerRadius": 124, "outerRadius": 148, "color": "#e9ecef"},
+          "encoding": {
+            "theta": {"field": "start", "type": "quantitative", "scale": {"domain": [0, 100], "range": [-1.5707963267948966, 4.71238898038469]}},
+            "theta2": {"field": "full", "type": "quantitative"}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Terrestrial Protection'"}],
+          "mark": {"type": "arc", "innerRadius": 82, "outerRadius": 106, "color": "#e9ecef"},
+          "encoding": {
+            "theta": {"field": "start", "type": "quantitative", "scale": {"domain": [0, 100], "range": [-1.5707963267948966, 4.71238898038469]}},
+            "theta2": {"field": "full", "type": "quantitative"}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Marine Protection'"}],
+          "mark": {"type": "arc", "innerRadius": 124, "outerRadius": 148},
+          "encoding": {
+            "theta": {"field": "start", "type": "quantitative", "scale": {"domain": [0, 100], "range": [-1.5707963267948966, 4.71238898038469]}},
+            "theta2": {"field": "rate", "type": "quantitative"},
+            "color": {
+              "field": "domain",
+              "type": "nominal",
+              "scale": {"domain": ["Terrestrial Protection", "Marine Protection"], "range": ["#1b4332", "#0077b6"]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "domain", "type": "nominal", "title": "Domain"},
+              {"field": "rate", "type": "quantitative", "title": "Protection (%)", "format": ".1f"}
+            ]
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Terrestrial Protection'"}],
+          "mark": {"type": "arc", "innerRadius": 82, "outerRadius": 106},
+          "encoding": {
+            "theta": {"field": "start", "type": "quantitative", "scale": {"domain": [0, 100], "range": [-1.5707963267948966, 4.71238898038469]}},
+            "theta2": {"field": "rate", "type": "quantitative"},
+            "color": {
+              "field": "domain",
+              "type": "nominal",
+              "scale": {"domain": ["Terrestrial Protection", "Marine Protection"], "range": ["#1b4332", "#0077b6"]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "domain", "type": "nominal", "title": "Domain"},
+              {"field": "rate", "type": "quantitative", "title": "Protection (%)", "format": ".1f"}
+            ]
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Marine Protection'"}],
+          "mark": {"type": "arc", "innerRadius": 124, "outerRadius": 148, "color": "#e76f51"},
+          "encoding": {
+            "theta": {"field": "targetStart", "type": "quantitative", "scale": {"domain": [0, 100], "range": [-1.5707963267948966, 4.71238898038469]}},
+            "theta2": {"field": "targetEnd", "type": "quantitative"}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Terrestrial Protection'"}],
+          "mark": {"type": "arc", "innerRadius": 82, "outerRadius": 106, "color": "#e76f51"},
+          "encoding": {
+            "theta": {"field": "targetStart", "type": "quantitative", "scale": {"domain": [0, 100], "range": [-1.5707963267948966, 4.71238898038469]}},
+            "theta2": {"field": "targetEnd", "type": "quantitative"}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Terrestrial Protection'"}],
+          "mark": {"type": "text", "fontSize": 11, "fontWeight": "bold", "color": "#1b4332", "dy": -8},
+          "encoding": {
+            "theta": {"value": 0},
+            "radius": {"value": 0},
+            "text": {"value": "LAND 22.6%"}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.domain === 'Marine Protection'"}],
+          "mark": {"type": "text", "fontSize": 11, "fontWeight": "bold", "color": "#005b8e", "dy": 9},
+          "encoding": {
+            "theta": {"value": 0},
+            "radius": {"value": 0},
+            "text": {"value": "OCEAN 48.9%"}
+          }
+        }
+      ]
+    };
+// Chart 6: Terrestrial IUCN Category Area Treemap
+    const chart6Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 260,
+      "title": {"text": "Protected Land by Management Category", "fontSize": 13, "color": "#1b4332"},
+      "data": {"url": "data/iucn_categories.csv"},
+      "transform": [
+        {"calculate": "datum.iucn === 'VI' ? 0 : datum.iucn === 'II' ? 57.6068 : datum.iucn === 'Ia' ? 57.6068 : datum.iucn === 'V' ? 77.5867 : datum.iucn === 'IV' ? 86.6303 : datum.iucn === 'Ib' ? 92.1127 : 96.9372", "as": "x0"},
+        {"calculate": "datum.iucn === 'VI' ? 57.6068 : datum.iucn === 'II' ? 100 : datum.iucn === 'Ia' ? 77.5867 : datum.iucn === 'V' ? 86.6303 : datum.iucn === 'IV' ? 92.1127 : datum.iucn === 'Ib' ? 96.9372 : 100", "as": "x1"},
+        {"calculate": "datum.iucn === 'II' ? 46.2039 : datum.iucn === 'VI' ? 0 : 0", "as": "y0"},
+        {"calculate": "datum.iucn === 'II' || datum.iucn === 'VI' ? 100 : 46.2039", "as": "y1"},
+        {"calculate": "(datum.x0 + datum.x1) / 2", "as": "label_x"},
+        {"calculate": "(datum.y0 + datum.y1) / 2", "as": "label_y"},
+        {"calculate": "datum.nrs_contribution_pct >= 8 ? format(datum.nrs_contribution_pct, '.1f') + '%' : ''", "as": "share_label"}
+      ],
+      "layer": [
+        {
+          "mark": {"type": "rect", "stroke": "#ffffff", "strokeWidth": 2},
+          "encoding": {
+            "x": {"field": "x0", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}, "axis": null},
+            "x2": {"field": "x1"},
+            "y": {"field": "y0", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}, "axis": null},
+            "y2": {"field": "y1"},
+            "color": {
+              "field": "iucn",
+              "type": "nominal",
+              "scale": {"domain": ["VI", "II", "Ia", "V", "IV", "Ib", "III"], "range": ["#1b4332", "#2d6a4f", "#40916c", "#52b788", "#74c69d", "#95d5b2", "#b7e4c7"]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "iucn", "type": "nominal", "title": "IUCN Category"},
+              {"field": "category_name", "type": "nominal", "title": "Category Name"},
+              {"field": "area_mha", "type": "quantitative", "title": "Area (Million ha)", "format": ".2f"},
+              {"field": "nrs_contribution_pct", "type": "quantitative", "title": "NRS Share (%)", "format": ".1f"}
+            ]
+          }
+        },
+        {
+          "transform": [{"filter": "datum.nrs_contribution_pct >= 20"}],
+          "mark": {"type": "text", "fontSize": 10, "fontWeight": "bold", "color": "white", "dy": -8},
+          "encoding": {
+            "x": {"field": "label_x", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "y": {"field": "label_y", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "text": {"field": "category_name"}
+          }
+        },
+        {
+          "mark": {"type": "text", "fontSize": 12, "fontWeight": "bold", "color": "white", "dy": 9},
+          "encoding": {
+            "x": {"field": "label_x", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "y": {"field": "label_y", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "text": {"field": "share_label"}
+          }
+        }
+      ]
+    };
+// Chart 7: Marine Reserves IUCN Management Heatmap Matrix
+    const chart7Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 340,
+      "title": {"text": "Ocean Protection by Category", "fontSize": 13, "color": "#0077b6"},
+      "data": {"url": "data/marine_iucn_matrix.csv"},
+      "transform": [{
+        "calculate": "datum.jurisdiction === 'Commonwealth Waters' ? 'Commonwealth' : 'State'",
+        "as": "jurisdiction_label"
+      }],
+      "layer": [
+        {
+          "mark": {"type": "rect"},
+          "encoding": {
+            "x": {
+              "field": "iucn",
+              "type": "ordinal",
+              "title": "IUCN Category",
+              "sort": ["Ia", "II", "III", "IV", "V", "VI"],
+              "axis": {
+                "labelAngle": 0,
+                "labelColor": "#17324d",
+                "labelFontSize": 11,
+                "labelFontWeight": "bold",
+                "labelPadding": 8,
+                "domain": false,
+                "ticks": false,
+                "titleColor": "#17324d",
+                "titleFontSize": 12,
+                "titlePadding": 10
+              }
+            },
+            "y": {
+              "field": "jurisdiction_label",
+              "type": "ordinal",
+              "title": "Jurisdiction",
+              "sort": ["Commonwealth", "State"],
+              "axis": {
+                "labelColor": "#17324d",
+                "labelFontSize": 11,
+                "labelFontWeight": "bold",
+                "labelPadding": 8,
+                "domain": false,
+                "ticks": false
+              }
+            },
+            "color": {
+              "field": "area_mha",
+              "type": "quantitative",
+              "scale": {"scheme": "blues"},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "iucn", "type": "nominal", "title": "IUCN Category"},
+              {"field": "jurisdiction", "type": "nominal", "title": "Jurisdiction"},
+              {"field": "reserves", "type": "quantitative", "title": "Reserve Count"},
+              {"field": "area_mha", "type": "quantitative", "title": "Area (Million ha)", "format": ".2f"}
+            ]
+          }
+        },
+        {
+          "mark": {"type": "text", "fontSize": 10},
+          "encoding": {
+            "x": {"field": "iucn", "type": "ordinal", "sort": ["Ia", "II", "III", "IV", "V", "VI"]},
+            "y": {"field": "jurisdiction_label", "type": "ordinal", "sort": ["Commonwealth", "State"]},
+            "text": {"field": "area_mha", "type": "quantitative", "format": ".2f"},
+            "color": {"condition": {"test": "datum.area_mha > 70", "value": "white"}, "value": "#17324d"}
+          }
+        }
+      ]
+    };
+// Chart 8: ABS State Land vs CAPAD Protected Area Connected Dot Plot
+    const chart8Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 340,
+      "title": {"text": "Total vs. Protected Land by State", "fontSize": 13, "color": "#1b4332"},
+      "layer": [
+        {
+          "data": {"url": "data/abs_state_land.csv"},
+          "transform": [
+            {"calculate": "datum.abs_total_area_ha / 1000000", "as": "total_mha"},
+            {"calculate": "datum.capad_protected_ha / 1000000", "as": "protected_mha"},
+            {"calculate": "datum.state === 'Western Australia' ? 'WA' : datum.state === 'Northern Territory' ? 'NT' : datum.state === 'Queensland' ? 'QLD' : datum.state === 'South Australia' ? 'SA' : datum.state === 'New South Wales' ? 'NSW' : datum.state === 'Victoria' ? 'VIC' : datum.state === 'Tasmania' ? 'TAS' : 'ACT'", "as": "state_label"}
+          ],
+          "mark": {"type": "rule", "color": "#adb5bd", "size": 3},
+          "encoding": {
+            "y": {
+              "field": "state_label",
+              "type": "nominal",
+              "title": "State / Territory",
+              "sort": ["WA", "NT", "QLD", "SA", "NSW", "VIC", "TAS", "ACT"],
+              "axis": {"labelColor": "#495057", "labelFontSize": 11, "labelFontWeight": "bold", "labelPadding": 8, "domain": false, "ticks": false}
+            },
+            "x": {
+              "field": "protected_mha",
+              "type": "quantitative",
+              "title": "Area (Million Hectares)",
+              "scale": {"domain": [0, 270]},
+              "axis": {
+                "labelColor": "#495057",
+                "labelFontSize": 10,
+                "gridColor": "#e6ece8",
+                "gridOpacity": 1,
+                "domainColor": "#9aaba1",
+                "tickColor": "#9aaba1",
+                "titleColor": "#1b4332",
+                "titleFontSize": 12,
+                "titleFontWeight": "bold",
+                "titlePadding": 12
+              }
+            },
+            "x2": {"field": "total_mha"}
+          }
+        },
+        {
+          "data": {"url": "data/abs_state_land.csv"},
+          "transform": [
+            {"calculate": "datum.abs_total_area_ha / 1000000", "as": "total_mha"},
+            {"calculate": "datum.capad_protected_ha / 1000000", "as": "protected_mha"},
+            {"fold": ["total_mha", "protected_mha"], "as": ["measure", "area_mha"]},
+            {"calculate": "datum.measure === 'total_mha' ? 'Total land area' : 'Protected land area'", "as": "series"},
+            {"calculate": "datum.state === 'Western Australia' ? 'WA' : datum.state === 'Northern Territory' ? 'NT' : datum.state === 'Queensland' ? 'QLD' : datum.state === 'South Australia' ? 'SA' : datum.state === 'New South Wales' ? 'NSW' : datum.state === 'Victoria' ? 'VIC' : datum.state === 'Tasmania' ? 'TAS' : 'ACT'", "as": "state_label"}
+          ],
+          "mark": {"type": "point", "filled": true, "size": 135, "stroke": "white", "strokeWidth": 1},
+          "encoding": {
+            "y": {
+              "field": "state_label",
+              "type": "nominal",
+              "title": "State / Territory",
+              "sort": ["WA", "NT", "QLD", "SA", "NSW", "VIC", "TAS", "ACT"],
+              "axis": {"labelColor": "#495057", "labelFontSize": 11, "labelFontWeight": "bold", "labelPadding": 8, "domain": false, "ticks": false}
+            },
+            "x": {
+              "field": "area_mha",
+              "type": "quantitative",
+              "title": "Area (Million Hectares)",
+              "scale": {"domain": [0, 270]},
+              "axis": {
+                "labelColor": "#495057",
+                "labelFontSize": 10,
+                "gridColor": "#e6ece8",
+                "gridOpacity": 1,
+                "domainColor": "#9aaba1",
+                "tickColor": "#9aaba1",
+                "titleColor": "#1b4332",
+                "titleFontSize": 12,
+                "titleFontWeight": "bold",
+                "titlePadding": 12
+              }
+            },
+            "color": {
+              "field": "series",
+              "type": "nominal",
+              "scale": {"domain": ["Total land area", "Protected land area"], "range": ["#495057", "#2d6a4f"]},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "state", "type": "nominal", "title": "State / Territory"},
+              {"field": "series", "type": "nominal", "title": "Measure"},
+              {"field": "area_mha", "type": "quantitative", "title": "Area (Million ha)", "format": ".2f"}
+            ]
+          }
+        }
+      ]
+    };
+// Chart 9: State Contribution Share to NRS Ranked Bar Chart
+    const chart9Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 340,
+      "title": {"text": "Protected Land Share by State", "fontSize": 13, "color": "#1b4332"},
+      "data": {"url": "data/state_protection.csv"},
+      "mark": {"type": "bar", "color": "#2d6a4f", "cornerRadiusEnd": 3},
+      "encoding": {
+        "y": {
+          "field": "state",
+          "type": "nominal",
+          "title": "State / Territory",
+          "sort": ["Western Australia", "Northern Territory", "South Australia", "Queensland", "New South Wales", "Victoria", "Tasmania", "Australian Capital Territory"],
+          "axis": {"labelColor": "#495057", "labelFontSize": 10, "labelPadding": 6, "domain": false, "ticks": false}
+        },
+        "x": {
+          "field": "nrs_contribution_pct",
+          "type": "quantitative",
+          "title": "Share of Protected Land (%)",
+          "axis": {
+            "labelColor": "#495057",
+            "labelFontSize": 10,
+            "gridColor": "#e6ece8",
+            "gridOpacity": 1,
+            "domainColor": "#9aaba1",
+            "tickColor": "#9aaba1",
+            "titleColor": "#1b4332",
+            "titleFontSize": 12,
+            "titleFontWeight": "bold",
+            "titlePadding": 12
+          }
+        },
+        "tooltip": [
+          {"field": "state", "type": "nominal", "title": "State / Territory"},
+          {"field": "nrs_contribution_pct", "type": "quantitative", "title": "Contribution Share (%)", "format": ".2f"}
+        ]
+      }
+    };
+// Chart 10: State Protection vs 30% Global Benchmark Bullet Chart
+    const chart10Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 260,
+      "title": {"text": "State Protection (%)", "fontSize": 14, "color": "#1b4332"},
+      "data": {"url": "data/state_protection.csv"},
+      "layer": [
+        {
+          "mark": {"type": "rect", "color": "#e9ecef"},
+          "encoding": {
+            "y": {"field": "state", "type": "nominal", "title": "State / Territory", "sort": ["Australian Capital Territory", "Tasmania", "Western Australia", "South Australia", "Northern Territory", "Victoria", "New South Wales", "Queensland"], "axis": {"labelColor": "#495057", "labelFontSize": 10, "labelFontWeight": "bold", "labelPadding": 7, "domain": false, "ticks": false}},
+            "x": {"datum": 0, "type": "quantitative", "scale": {"domain": [0, 60], "nice": false}},
+            "x2": {"datum": 30}
+          }
+        },
+        {
+          "mark": {"type": "rect", "color": "#d8f3dc"},
+          "encoding": {
+            "y": {"field": "state", "type": "nominal", "sort": ["Australian Capital Territory", "Tasmania", "Western Australia", "South Australia", "Northern Territory", "Victoria", "New South Wales", "Queensland"]},
+            "x": {"datum": 30, "type": "quantitative", "scale": {"domain": [0, 60], "nice": false}},
+            "x2": {"datum": 60}
+          }
+        },
+        {
+          "mark": {"type": "bar", "color": "#2d6a4f", "size": 12},
+          "encoding": {
+            "y": {"field": "state", "type": "nominal", "title": "State / Territory", "sort": ["Australian Capital Territory", "Tasmania", "Western Australia", "South Australia", "Northern Territory", "Victoria", "New South Wales", "Queensland"], "axis": {"labelColor": "#495057", "labelFontSize": 10, "labelFontWeight": "bold", "labelPadding": 7, "domain": false, "ticks": false}},
+            "x": {"field": "pct", "type": "quantitative", "title": "Land Protected (%)", "scale": {"domain": [0, 60], "nice": false}, "axis": {"labelColor": "#495057", "labelFontSize": 10, "labelPadding": 6, "labelExpr": "datum.value + '%'", "tickCount": 7, "gridColor": "#e6ece8", "gridOpacity": 1, "domainColor": "#9aaba1", "tickColor": "#9aaba1", "titleColor": "#1b4332", "titleFontSize": 12, "titleFontWeight": "bold", "titlePadding": 10}},
+            "x2": {"datum": 0},
+            "tooltip": [
+              {"field": "state", "type": "nominal", "title": "State or Territory"},
+              {"field": "pct", "type": "quantitative", "title": "Land Protected (%)", "format": ".1f"}
+            ]
+          }
+        },
+        {
+          "mark": {"type": "rule", "color": "#c1121f", "strokeDash": [5, 4], "size": 2},
+          "encoding": {
+            "x": {"datum": 30, "type": "quantitative", "scale": {"domain": [0, 60], "nice": false}}
+          }
+        }
+      ]
+    };
+// Chart 11: IBRA 7.1 Bioregional Protection Dot Plot
+    const chart11Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 400,
+      "title": {"text": "Protection by Ecological Region", "fontSize": 14, "color": "#1b4332"},
+      "data": {"url": "data/ibra_bioregions.csv"},
+      "layer": [
+        {
+          "mark": {"type": "rule", "color": "#e76f51", "strokeDash": [4, 4], "size": 1.5},
+          "encoding": {
+            "x": {"datum": 17.0, "type": "quantitative"}
+          }
+        },
+        {
+          "mark": {"type": "rule", "color": "#2d6a4f", "size": 2},
+          "encoding": {
+            "y": {"field": "ibra_name", "type": "nominal", "title": "Region", "sort": ["MacDonnell Ranges", "Nullarbor", "Wet Tropics", "Great Sandy Desert", "Tanami", "Great Victoria Desert", "Cape York Peninsula", "Central Ranges", "Simpson Strzelecki Dunefields", "Gawler", "Channel Country", "Pilbara", "Murchison", "Finke", "Mitchell Grass Downs"], "axis": {"labelColor": "#495057", "labelFontSize": 10, "labelFontWeight": "bold", "labelPadding": 5, "domain": false, "ticks": false}},
+            "x": {"field": "pct_protected", "type": "quantitative", "title": "Protected (%)", "scale": {"domain": [0, 100], "nice": false}, "axis": {"labelColor": "#495057", "labelFontSize": 10, "labelPadding": 6, "labelExpr": "datum.value + '%'", "tickCount": 6, "gridColor": "#e6ece8", "gridOpacity": 1, "domainColor": "#9aaba1", "tickColor": "#9aaba1", "titleColor": "#1b4332", "titleFontSize": 12, "titleFontWeight": "bold", "titlePadding": 10}},
+            "x2": {"value": 0}
+          }
+        },
+        {
+          "mark": {"type": "circle", "size": 140},
+          "encoding": {
+            "y": {"field": "ibra_name", "type": "nominal", "sort": ["MacDonnell Ranges", "Nullarbor", "Wet Tropics", "Great Sandy Desert", "Tanami", "Great Victoria Desert", "Cape York Peninsula", "Central Ranges", "Simpson Strzelecki Dunefields", "Gawler", "Channel Country", "Pilbara", "Murchison", "Finke", "Mitchell Grass Downs"]},
+            "x": {"field": "pct_protected", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "color": {
+              "field": "pct_protected",
+              "type": "quantitative",
+              "scale": {"scheme": "greens"},
+              "legend": null
+            },
+            "tooltip": [
+              {"field": "ibra_name", "type": "nominal", "title": "Bioregion Name"},
+              {"field": "jurisdiction", "type": "nominal", "title": "Jurisdiction(s)"},
+              {"field": "pct_protected", "type": "quantitative", "title": "Protected (%)", "format": ".1f"},
+              {"field": "nrs_contrib_pct", "type": "quantitative", "title": "NRS Share (%)", "format": ".2f"}
+            ]
+          }
+        },
+        {
+          "transform": [{"filter": "datum.ibra_code === 'MGD'"}],
+          "mark": {"type": "rule", "color": "#c1121f", "size": 1.5},
+          "encoding": {
+            "y": {"field": "ibra_name", "type": "nominal", "sort": ["MacDonnell Ranges", "Nullarbor", "Wet Tropics", "Great Sandy Desert", "Tanami", "Great Victoria Desert", "Cape York Peninsula", "Central Ranges", "Simpson Strzelecki Dunefields", "Gawler", "Channel Country", "Pilbara", "Murchison", "Finke", "Mitchell Grass Downs"]},
+            "x": {"field": "pct_protected", "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "x2": {"datum": 29}
+          }
+        },
+        {
+          "transform": [{"filter": "datum.ibra_code === 'MGD'"}],
+          "mark": {"type": "text", "align": "left", "dx": 5, "dy": -10, "fontSize": 11, "fontWeight": "bold", "color": "#a1121f"},
+          "encoding": {
+            "y": {"field": "ibra_name", "type": "nominal", "sort": ["MacDonnell Ranges", "Nullarbor", "Wet Tropics", "Great Sandy Desert", "Tanami", "Great Victoria Desert", "Cape York Peninsula", "Central Ranges", "Simpson Strzelecki Dunefields", "Gawler", "Channel Country", "Pilbara", "Murchison", "Finke", "Mitchell Grass Downs"]},
+            "x": {"datum": 29, "type": "quantitative", "scale": {"domain": [0, 100], "nice": false}},
+            "text": {"value": "1.6%"}
+          }
+        }
+      ]
+    };
+    const chart12Values = Array.from({length: 100}, (_, index) => ({
+      tile: index + 1,
+      column: index % 10,
+      row: Math.floor(index / 10),
+      share: index < 23
+        ? "Protected Now (About 22.6%)"
+        : index < 30
+          ? "Approximate Gap to 30%"
+          : "Beyond the 30% Benchmark"
+    }));
+// Chart 12: 100-Tile Land Protection Waffle Chart
+    const chart12Spec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": "container",
+      "height": 210,
+      "title": {"text": "About 23 of Every 100 Parts of Land Are Protected", "fontSize": 14, "color": "#1b4332"},
+      "data": {"values": chart12Values},
+      "mark": {"type": "rect", "stroke": "white", "strokeWidth": 2, "cornerRadius": 2},
+      "encoding": {
+        "x": {"field": "column", "type": "ordinal", "title": null, "axis": null, "sort": "ascending"},
+        "y": {"field": "row", "type": "ordinal", "title": null, "axis": null, "sort": "descending"},
+        "color": {
+          "field": "share",
+          "type": "nominal",
+          "title": "Share of Australia's Land Area",
+          "scale": {
+            "domain": ["Protected Now (About 22.6%)", "Approximate Gap to 30%", "Beyond the 30% Benchmark"],
+            "range": ["#2d6a4f", "#f4c95d", "#dfe4e1"]
+          },
+          "legend": null
+        },
+        "tooltip": [
+          {"field": "tile", "type": "ordinal", "title": "Tile (About 1%)"},
+          {"field": "share", "type": "nominal", "title": "Category"}
+        ]
+      },
+      "config": {"view": {"stroke": null}}
+    };
+// Render all 12 visualizations
+    const legendPanelStyle = {
+      fill: "#f4f8f5",
+      stroke: "#d8e7dc",
+      cornerRadius: 8,
+      padding: 10
+    };
+    function embedChart(selector, spec) {
+      const config = spec.config || {};
+      spec.config = {
+        ...config,
+        font: 'Segoe UI',
+        axis: {
+          labelFont: 'Segoe UI',
+          labelFontSize: 10,
+          titleFont: 'Segoe UI',
+          titleFontSize: 12,
+          titleFontWeight: 700,
+          ...(config.axis || {})
+        },
+        title: {
+          font: 'Segoe UI',
+          fontSize: 14,
+          fontWeight: 700,
+          ...(config.title || {})
+        },
+        legend: {
+          ...legendPanelStyle,
+          labelFont: 'Segoe UI',
+          labelFontSize: 10,
+          titleFont: 'Segoe UI',
+          titleFontSize: 11,
+          ...(config.legend || {})
+        }
+      };
+      return vegaEmbed(selector, spec).catch(console.error);
+    }
+    const mapCharts = [
+      ['#vis-map1', map1Spec],
+      ['#vis-map2', map2Spec],
+      ['#vis-map3', map3Spec]
+    ];
+    let renderedMapScale = null;
+    function renderMaps() {
+      const mapWidth = document.querySelector('#vis-map1').clientWidth;
+      const mapScale = Math.min(540, Math.max(140, Math.round(mapWidth * (mapWidth < 400 ? 0.55 : 0.85))));
+      if (mapScale === renderedMapScale) return;
+      renderedMapScale = mapScale;
+      mapCharts.forEach(([selector, spec]) => {
+        spec.projection.scale = mapScale;
+        embedChart(selector, spec);
+      });
+    }
+    renderMaps();
+    window.addEventListener('resize', renderMaps);
+    embedChart('#vis-chart4', chart4Spec);
+    embedChart('#vis-chart5', chart5Spec);
+    embedChart('#vis-chart6', chart6Spec);
+    embedChart('#vis-chart7', chart7Spec);
+    embedChart('#vis-chart8', chart8Spec);
+    embedChart('#vis-chart9', chart9Spec);
+    embedChart('#vis-chart10', chart10Spec);
+    embedChart('#vis-chart11', chart11Spec);
+    embedChart('#vis-chart12', chart12Spec);
+  </script>
+</body>
+</html>
